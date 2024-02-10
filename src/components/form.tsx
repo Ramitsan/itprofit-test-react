@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IFormData } from "../intefaces";
-
+import {PhoneNumberUtil} from "google-libphonenumber";
 interface IFormProps {
   onSubmit: (data: IFormData) => void;
 }
@@ -11,28 +11,74 @@ export function Form({onSubmit} : IFormProps) {
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
 
+  const [isValidName, setValidName] = useState(true);
+  const [isValidMail, setValidMail] = useState(true);
+  const [isValidPhone, setValidPhone] = useState(true);
+  const [isValidMessage, setValidMessage] = useState(true);
+
+  const reg = /^[\w-\.]+@[\w-]+\.[a-z]{2,5}$/i;
+  const phoneUtil = PhoneNumberUtil.getInstance();
+
+  const checkValidMail = () => {
+    const valid = reg.test(email);    
+    return valid;
+  }
+  
+  const checkValidName = () => {
+    const valid = !!name; 
+    return valid;
+  }
+  
+  const checkValidPhone = () => {
+    let valid = false;
+    try {
+      const checkPhone = phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
+      console.log(checkPhone);
+      valid = checkPhone;
+    }
+    catch(e) {  
+    }  
+    return valid;
+  }
+  
+  const checkValidMessage = () => {
+    const valid = !!message;
+    return valid;
+  }
+
   return (
     <form action="" className="form" method="POST" autoComplete="off" noValidate 
     onSubmit={(evt) => {
       evt.preventDefault();
-      onSubmit({name, email, phone, message})
+      setValidName(checkValidName());
+      setValidMail(checkValidMail());
+      setValidPhone(checkValidPhone());
+      setValidMessage(checkValidMessage());
+
+      const isValidForm = checkValidName() && checkValidMail() && checkValidPhone() && checkValidMessage();
+
+      isValidForm && onSubmit({name, email, phone, message});
     }}>
         <div className="form__wrapper">
             <div className="input-wrapper input-wrapper__user-name">
                 <label htmlFor="user-name" className="label">Имя: </label>
-                <input type="text" id="user-name" name="user-name" placeholder="Введите имя" required onChange={(evt) => setName(evt.target.value)}/>
+                <input type="text" id="user-name" name="user-name" placeholder="Введите имя" required onChange={(evt) => setName(evt.target.value)} style={{border: !isValidName ? '2px solid #f00' : ''}}/>
+                {!isValidName && <p>Введите имя</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-email">
                 <label htmlFor="user-email" className="label">Email: </label>
-                <input type="email" id="user-email" name="user-email" placeholder="Введите email" required onChange={(evt) => setEmail(evt.target.value)}/>
+                <input type="email" id="user-email" name="user-email" placeholder="Введите email" required onChange={(evt) => setEmail(evt.target.value)} style={{border: !isValidMail ? '2px solid #f00' : ''}}/>
+                {!isValidMail && <p>Некорректный email</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-phone">
                 <label htmlFor="user-phone" className="label">Телефон: </label>
-                <input type="text" id="user-phone" name="user-phone" placeholder="Введите телефон" required onChange={(evt) => setPhone(evt.target.value)}/>
+                <input type="text" id="user-phone" name="user-phone" placeholder="Введите телефон" required onChange={(evt) => setPhone(evt.target.value)} style={{border: !isValidPhone ? '2px solid #f00' : ''}}/>
+                {!isValidPhone && <p>Некорректный номер</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-message label">
                 <label htmlFor="user-message">Сообщение: </label>
-                <textarea name="user-message" id="user-message" cols={30} rows={10} placeholder="Оставьте сообщение" required onChange={(evt) => setMessage(evt.target.value)}></textarea>
+                <textarea name="user-message" id="user-message" cols={30} rows={10} placeholder="Оставьте сообщение" required onChange={(evt) => setMessage(evt.target.value)} style={{border: !isValidMessage ? '2px solid #f00' : ''}}></textarea>
+                {!isValidMessage && <p>Напишите сообщение</p>}
             </div>
             
             <button type="submit" className="btn btn--submit">Отправить</button>
