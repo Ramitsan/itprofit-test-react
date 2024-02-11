@@ -1,7 +1,12 @@
 import React from "react";
 
-export function MessageSuccess() {
+interface IMessageSuccess {
+  show: boolean,
+  data: string
+}
+
+export function MessageSuccess({show, data} : IMessageSuccess) {
   return (
-    <div className="message message--success"></div>
+    <div className= {`message message--success ${show ? "message-show" : ""}`}>{data}</div>
   )
 }
