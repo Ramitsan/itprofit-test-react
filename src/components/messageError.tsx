@@ -1,11 +1,11 @@
 import React from "react";
 
-interface IMessageError {
+interface IMessageErrorProps {
   show: boolean,
   data: string
 }
 
-export function MessageError({show, data}: IMessageError) {
+export function MessageError({show, data}: IMessageErrorProps) {
   return (
     <div className= {`message message--error ${show ? "message-show" : ""}`}>{data}</div>
   )

@@ -1,9 +1,13 @@
 import React from "react";
 
-export function OpenModalButton() {
+interface IOpenModalButtonProps {
+  onClick: () => void
+}
+
+export function OpenModalButton({onClick} : IOpenModalButtonProps) {
   return (
     <div className="button-wrapper">
-      <button className="btn btn--modal">Открыть окно</button>
+      <button className="btn btn--modal" onClick={onClick}>Открыть окно</button>
     </div>
   )
 }
