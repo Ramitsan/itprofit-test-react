@@ -1,7 +1,7 @@
 import React from "react";
 
 interface IOpenModalButtonProps {
-  onClick: () => void
+  onClick: () => void;
 }
 
 export function OpenModalButton({onClick} : IOpenModalButtonProps) {

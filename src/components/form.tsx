@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { IFormData } from "../intefaces";
 import {PhoneNumberUtil} from "google-libphonenumber";
+import { postRequest } from "../ajax";
 interface IFormProps {
-  onSubmit: (data: IFormData) => void;
+  onSuccess: (data: string) => void;
+  onError: (data: string) => void;
+  onRequest?: (data: IFormData) => void;
 }
 
-export function Form({onSubmit} : IFormProps) {
+export function Form({onSuccess, onError, onRequest} : IFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -46,6 +49,21 @@ export function Form({onSubmit} : IFormProps) {
     return valid;
   }
 
+  const handleSubmit = (formData: IFormData) => {  
+    onRequest?.(formData);
+    postRequest(
+      (data) => {
+        setName('');
+        setEmail('');
+        setPhone('');
+        setMessage('');
+        onSuccess(data.message);
+      },
+      (data) => {
+        onError(data.message);
+      })
+  }
+
   return (
     <form action="" className="form" method="POST" autoComplete="off" noValidate 
     onSubmit={(evt) => {
@@ -57,27 +75,27 @@ export function Form({onSubmit} : IFormProps) {
 
       const isValidForm = checkValidName() && checkValidMail() && checkValidPhone() && checkValidMessage();
 
-      isValidForm && onSubmit({name, email, phone, message});
+      isValidForm && handleSubmit({name, email, phone, message});
     }}>
         <div className="form__wrapper">
             <div className="input-wrapper input-wrapper__user-name">
                 <label htmlFor="user-name" className="label">Имя: </label>
-                <input type="text" id="user-name" name="user-name" placeholder="Введите имя" required onChange={(evt) => setName(evt.target.value)} style={{border: !isValidName ? '2px solid #f00' : ''}}/>
+                <input type="text" id="user-name" name="user-name" placeholder="Введите имя" value={name} required onChange={(evt) => setName(evt.target.value)} style={{border: !isValidName ? '2px solid #f00' : ''}}/>
                 {!isValidName && <p>Введите имя</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-email">
                 <label htmlFor="user-email" className="label">Email: </label>
-                <input type="email" id="user-email" name="user-email" placeholder="Введите email" required onChange={(evt) => setEmail(evt.target.value)} style={{border: !isValidMail ? '2px solid #f00' : ''}}/>
+                <input type="email" id="user-email" name="user-email" placeholder="Введите email" value={email} required onChange={(evt) => setEmail(evt.target.value)} style={{border: !isValidMail ? '2px solid #f00' : ''}}/>
                 {!isValidMail && <p>Некорректный email</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-phone">
                 <label htmlFor="user-phone" className="label">Телефон: </label>
-                <input type="text" id="user-phone" name="user-phone" placeholder="Введите телефон" required onChange={(evt) => setPhone(evt.target.value)} style={{border: !isValidPhone ? '2px solid #f00' : ''}}/>
+                <input type="text" id="user-phone" name="user-phone" placeholder="Введите телефон" value={phone} required onChange={(evt) => setPhone(evt.target.value)} style={{border: !isValidPhone ? '2px solid #f00' : ''}}/>
                 {!isValidPhone && <p>Некорректный номер</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-message label">
                 <label htmlFor="user-message">Сообщение: </label>
-                <textarea name="user-message" id="user-message" cols={30} rows={10} placeholder="Оставьте сообщение" required onChange={(evt) => setMessage(evt.target.value)} style={{border: !isValidMessage ? '2px solid #f00' : ''}}></textarea>
+                <textarea name="user-message" id="user-message" cols={30} rows={10} placeholder="Оставьте сообщение" value={message} required onChange={(evt) => setMessage(evt.target.value)} style={{border: !isValidMessage ? '2px solid #f00' : ''}}></textarea>
                 {!isValidMessage && <p>Напишите сообщение</p>}
             </div>
             

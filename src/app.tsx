@@ -33,18 +33,31 @@ export default function App() {
     setMessageData('');
     postRequest(
       (data) => {
-        setShowSuccess(true);
-        setShowError(false);
-        setMessageData(data.message);
+        
       },
       (data) => {
-        setShowSuccess(false);
-        setShowError(true);
-        setMessageData(data.message);
+        
       })
   }
+
+  const handleFormSuccess = (data: string) => {
+    setShowSuccess(true);
+    setShowError(false);
+    setMessageData(data);
+  }
+  const handleFormError = (data: string) => {
+    setShowSuccess(false);
+    setShowError(true);
+    setMessageData(data);
+  }
+
+  const handleFormRequest = () => {
+    setShowSuccess(false);
+    setShowError(false);
+    setMessageData('');
+  }
+
   const handleOpenModalClick = () => {
-    console.log(111);
     setShowModal(true);
   }
 
@@ -56,7 +69,7 @@ export default function App() {
     <>
       <MessageSuccess show={showSuccess} data={messageData}/>
       <MessageError show={showError} data={messageData}/>
-      <Form onSubmit={handleSubmit} />
+      <Form onSuccess={handleFormSuccess} onError={handleFormError} onRequest={handleFormRequest}/>
       <OpenModalButton onClick={handleOpenModalClick} />
       <Modal show={showModal} onClose={handleCloseModal}/>
     </>

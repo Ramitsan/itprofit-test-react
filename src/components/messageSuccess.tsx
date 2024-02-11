@@ -1,8 +1,8 @@
 import React from "react";
 
 interface IMessageSuccessProps {
-  show: boolean,
-  data: string
+  show: boolean;
+  data: string;
 }
 
 export function MessageSuccess({show, data} : IMessageSuccessProps) {

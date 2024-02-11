@@ -1,8 +1,8 @@
 import React from "react";
 
 interface IModalProps {
-  show: boolean,
-  onClose: () => void
+  show: boolean;
+  onClose: () => void;
 }
 
 export function Modal({show, onClose}: IModalProps) {
