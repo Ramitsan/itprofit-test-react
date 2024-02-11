@@ -1,3 +1,5 @@
+import { IFormData, IServerMessage } from "./intefaces";
+
 const baseUrl = 'http://localhost:9090/api';
 const requestStatusOK = 200;
 const requestStatusBad = 400;
@@ -12,10 +14,10 @@ export const getRequest = () => {
   .then(data => console.log(data));
 }
 
-export const postRequest = (onLoad: (data: any) => void , onError: (data: any) => void ) => {
+export const postRequest = (data: IFormData, onLoad: (data: IServerMessage) => void , onError: (data: IServerMessage) => void ) => {
   fetch(`${baseUrl}/registration`, {
     method: 'POST', 
-    body: JSON.stringify({})
+    body: JSON.stringify(data)
   })
   .then(res => {
     return res.json()

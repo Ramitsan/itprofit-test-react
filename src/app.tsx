@@ -29,17 +29,6 @@ export default function App() {
     }
   }, [showModal]);
 
-  const handleSubmit = (formData: IFormData) => {
-    setMessageData('');
-    postRequest(
-      (data) => {
-        
-      },
-      (data) => {
-        
-      })
-  }
-
   const handleFormSuccess = (data: string) => {
     setShowSuccess(true);
     setShowError(false);

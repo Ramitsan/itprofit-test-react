@@ -4,3 +4,8 @@ export interface IFormData {
   phone: string,
   message: string
 }
+
+export interface IServerMessage {
+  status: string,
+  message: string
+}

@@ -36,7 +36,6 @@ export function Form({onSuccess, onError, onRequest} : IFormProps) {
     let valid = false;
     try {
       const checkPhone = phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
-      console.log(checkPhone);
       valid = checkPhone;
     }
     catch(e) {  
@@ -49,9 +48,9 @@ export function Form({onSuccess, onError, onRequest} : IFormProps) {
     return valid;
   }
 
-  const handleSubmit = (formData: IFormData) => {  
+  const sendRequest = (formData: IFormData) => {  
     onRequest?.(formData);
-    postRequest(
+    postRequest( formData, 
       (data) => {
         setName('');
         setEmail('');
@@ -64,39 +63,45 @@ export function Form({onSuccess, onError, onRequest} : IFormProps) {
       })
   }
 
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+      const checkNameResult = checkValidName();
+      const checkMailResult = checkValidMail();
+      const checkPhoneResult = checkValidPhone();
+      const checkMessageResult = checkValidMessage();
+
+      setValidName(checkNameResult);
+      setValidMail(checkMailResult);
+      setValidPhone(checkPhoneResult);
+      setValidMessage(checkMessageResult);
+
+      const isValidForm = checkNameResult && checkMailResult && checkPhoneResult && checkMessageResult;
+
+      isValidForm && sendRequest({name, email, phone, message});
+  }
+
   return (
-    <form action="" className="form" method="POST" autoComplete="off" noValidate 
-    onSubmit={(evt) => {
-      evt.preventDefault();
-      setValidName(checkValidName());
-      setValidMail(checkValidMail());
-      setValidPhone(checkValidPhone());
-      setValidMessage(checkValidMessage());
-
-      const isValidForm = checkValidName() && checkValidMail() && checkValidPhone() && checkValidMessage();
-
-      isValidForm && handleSubmit({name, email, phone, message});
-    }}>
+    <form action="" className="form" method="POST" autoComplete="off" noValidate onSubmit={handleSubmit}>
         <div className="form__wrapper">
             <div className="input-wrapper input-wrapper__user-name">
                 <label htmlFor="user-name" className="label">Имя: </label>
-                <input type="text" id="user-name" name="user-name" placeholder="Введите имя" value={name} required onChange={(evt) => setName(evt.target.value)} style={{border: !isValidName ? '2px solid #f00' : ''}}/>
-                {!isValidName && <p>Введите имя</p>}
+                <input className={`input ${!isValidName ? "input--invalid" : ""} `} type="text" id="user-name" name="user-name" placeholder="Введите имя" value={name} required onChange={(evt) => setName(evt.target.value)}/>
+                {!isValidName && <p className="input-error">Введите имя</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-email">
                 <label htmlFor="user-email" className="label">Email: </label>
-                <input type="email" id="user-email" name="user-email" placeholder="Введите email" value={email} required onChange={(evt) => setEmail(evt.target.value)} style={{border: !isValidMail ? '2px solid #f00' : ''}}/>
-                {!isValidMail && <p>Некорректный email</p>}
+                <input className={`input ${!isValidName ? "input--invalid" : ""} `} type="email" id="user-email" name="user-email" placeholder="Введите email" value={email} required onChange={(evt) => setEmail(evt.target.value)}/>
+                {!isValidMail && <p className="input-error">Некорректный email</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-phone">
                 <label htmlFor="user-phone" className="label">Телефон: </label>
-                <input type="text" id="user-phone" name="user-phone" placeholder="Введите телефон" value={phone} required onChange={(evt) => setPhone(evt.target.value)} style={{border: !isValidPhone ? '2px solid #f00' : ''}}/>
-                {!isValidPhone && <p>Некорректный номер</p>}
+                <input className={`input ${!isValidName ? "input--invalid" : ""} `} type="text" id="user-phone" name="user-phone" placeholder="Введите телефон" value={phone} required onChange={(evt) => setPhone(evt.target.value)}/>
+                {!isValidPhone && <p className="input-error">Некорректный номер</p>}
             </div>
             <div className="input-wrapper input-wrapper__user-message label">
                 <label htmlFor="user-message">Сообщение: </label>
-                <textarea name="user-message" id="user-message" cols={30} rows={10} placeholder="Оставьте сообщение" value={message} required onChange={(evt) => setMessage(evt.target.value)} style={{border: !isValidMessage ? '2px solid #f00' : ''}}></textarea>
-                {!isValidMessage && <p>Напишите сообщение</p>}
+                <textarea className={`input ${!isValidName ? "input--invalid" : ""} `} name="user-message" id="user-message" cols={30} rows={10} placeholder="Оставьте сообщение" value={message} required onChange={(evt) => setMessage(evt.target.value)}></textarea>
+                {!isValidMessage && <p className="input-error">Напишите сообщение</p>}
             </div>
             
             <button type="submit" className="btn btn--submit">Отправить</button>
